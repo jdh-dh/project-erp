@@ -5,11 +5,15 @@ import type {
   Contract,
   Customer,
   CustomerDetail,
+  Milestone,
   Page,
   Project,
   ProjectDetail,
   ProjectStatus,
+  ScheduleSummary,
   User,
+  WbsItem,
+  WbsStatus,
 } from "../types";
 
 // ---- auth ----
@@ -130,6 +134,68 @@ export async function addContract(
   }
 ): Promise<Contract> {
   return (await client.post(`/projects/${projectId}/contracts`, body)).data;
+}
+
+// ---- schedule (WBS / milestones) ----
+export async function fetchWbs(projectId: number): Promise<WbsItem[]> {
+  return (await client.get(`/projects/${projectId}/wbs`)).data;
+}
+
+export async function createWbs(
+  projectId: number,
+  body: {
+    name: string;
+    parent_id?: number | null;
+    assignee_id?: number | null;
+    start_date?: string | null;
+    end_date?: string | null;
+  }
+): Promise<WbsItem> {
+  return (await client.post(`/projects/${projectId}/wbs`, body)).data;
+}
+
+export async function updateWbs(
+  projectId: number,
+  itemId: number,
+  body: Partial<{
+    name: string;
+    parent_id: number | null;
+    assignee_id: number | null;
+    start_date: string | null;
+    end_date: string | null;
+    progress: number;
+    status: WbsStatus;
+  }>
+): Promise<WbsItem> {
+  return (await client.patch(`/projects/${projectId}/wbs/${itemId}`, body)).data;
+}
+
+export async function deactivateWbs(projectId: number, itemId: number): Promise<void> {
+  await client.patch(`/projects/${projectId}/wbs/${itemId}/deactivate`);
+}
+
+export async function fetchMilestones(projectId: number): Promise<Milestone[]> {
+  return (await client.get(`/projects/${projectId}/milestones`)).data;
+}
+
+export async function createMilestone(
+  projectId: number,
+  body: { name: string; due_date: string; note?: string }
+): Promise<Milestone> {
+  return (await client.post(`/projects/${projectId}/milestones`, body)).data;
+}
+
+export async function achieveMilestone(
+  projectId: number,
+  msId: number
+): Promise<Milestone> {
+  return (await client.patch(`/projects/${projectId}/milestones/${msId}/achieve`)).data;
+}
+
+export async function fetchScheduleSummary(
+  projectId: number
+): Promise<ScheduleSummary> {
+  return (await client.get(`/projects/${projectId}/schedule/summary`)).data;
 }
 
 // ---- change logs ----

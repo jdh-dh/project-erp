@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routes import auth, change_logs, customers, projects, users
+from app.api.routes import auth, change_logs, customers, projects, schedule, users
 from app.core.config import settings
 from app.core.exceptions import AppError
 from app.core.logging import get_logger, setup_logging
@@ -59,7 +59,14 @@ def create_app() -> FastAPI:
     def health():
         return {"status": "ok"}
 
-    for router in (auth.router, users.router, customers.router, projects.router, change_logs.router):
+    for router in (
+        auth.router,
+        users.router,
+        customers.router,
+        projects.router,
+        schedule.router,
+        change_logs.router,
+    ):
         app.include_router(router, prefix="/api")
 
     return app

@@ -1,5 +1,46 @@
 # 검증 문서 (verification.md)
 
+## Phase 2 검증 결과 — 일정 관리
+
+- 검증일: 2026-07-07
+- 상태: **검증 완료**
+
+### 시험 결과
+
+- 백엔드 pytest **48건 전체 통과** (Phase 2 신규 12건 포함), 커버리지 93%
+- 프론트 빌드(TypeScript 타입 검사)·Vitest 통과
+
+| 계획 ID | 수행 테스트 (tests/test_schedule_api.py) | 결과 |
+|---------|------------------------------------------|------|
+| UT-WBS-01 | TestWbsCrud::test_hierarchy_and_history, test_parent_from_other_project_rejected | 통과 |
+| UT-WBS-02 | TestWbsCrud::test_self_and_circular_parent_rejected | 통과 |
+| UT-WBS-03 | TestWbsCrud::test_progress_100_marks_done | 통과 |
+| UT-WBS-04 | TestWbsCrud::test_delay_computation | 통과 |
+| UT-WBS-05 | TestWbsCrud::test_deactivate_cascades_children | 통과 |
+| UT-MS-01 | TestMilestone::test_milestone_flow | 통과 |
+| UT-SCH-01 | TestScheduleSummary::test_summary | 통과 |
+| IT-09 | TestWbsCrud::test_hierarchy_and_history (change_logs 확인 포함) | 통과 |
+| IT-10 | TestAssigneePermission::test_assignee_updates_own_progress | 통과 |
+| IT-11 | TestWbsCrud::test_member_cannot_create | 통과 |
+| IT-12 | TestScheduleSummary::test_summary | 통과 |
+
+### E2E 수동 검증
+
+실서버(uvicorn + Vite + PostgreSQL 16) 기동 후 확인:
+
+1. API: WBS 계층 등록 → 요약 조회(진척률 50%, WBS 지연 1건, 마일스톤 지연 1건) — 계산값 정상
+2. UI: 프로젝트 상세 내 일정 섹션 — WBS 계층 들여쓰기, 지연 배지, 진척률 인라인 수정, 마일스톤 달성 처리 버튼 정상 렌더링
+
+### 요구사항 충족
+
+| 요구사항 | 충족 여부 |
+|----------|-----------|
+| REQ-WBS-001~008 | 충족 (계층, 담당자·기간·진척률·상태, 지연 판정, 이력, 논리삭제 연쇄, 100%→완료, 담당자 본인 수정) |
+| REQ-MS-001~003 | 충족 (등록/수정, 달성 처리·달성일, 지연 판정) |
+| REQ-SCH-001 | 충족 (진척률 평균·지연 수, 비활성 제외) |
+
+---
+
 ## Phase 1 검증 결과
 
 - 검증일: 2026-07-07

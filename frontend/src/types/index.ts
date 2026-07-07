@@ -87,6 +87,41 @@ export interface ProjectDetail extends Project {
   contracts: Contract[];
 }
 
+export type WbsStatus = "TODO" | "IN_PROGRESS" | "DONE";
+
+export interface WbsItem {
+  id: number;
+  parent_id: number | null;
+  name: string;
+  assignee_id: number | null;
+  assignee_name: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  progress: number;
+  status: WbsStatus;
+  sort_order: number;
+  depth: number;
+  is_delayed: boolean;
+}
+
+export interface Milestone {
+  id: number;
+  name: string;
+  due_date: string;
+  status: "PENDING" | "ACHIEVED";
+  achieved_date: string | null;
+  note: string | null;
+  is_delayed: boolean;
+}
+
+export interface ScheduleSummary {
+  progress: number;
+  wbs_total: number;
+  wbs_delayed: number;
+  milestone_total: number;
+  milestone_delayed: number;
+}
+
 export interface ChangeLog {
   id: number;
   entity_type: string;
