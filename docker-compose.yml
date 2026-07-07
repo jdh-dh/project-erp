@@ -1,0 +1,37 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: erp
+      POSTGRES_PASSWORD: erp
+      POSTGRES_DB: erp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U erp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      ERP_DATABASE_URL: postgresql+psycopg2://erp:erp@db:5432/erp
+      ERP_JWT_SECRET: ${ERP_JWT_SECRET:-change-me-in-production}
+      ERP_ADMIN_EMAIL: ${ERP_ADMIN_EMAIL:-admin@example.com}
+      ERP_ADMIN_PASSWORD: ${ERP_ADMIN_PASSWORD:-admin1234}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  pgdata:
