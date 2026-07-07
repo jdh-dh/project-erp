@@ -95,6 +95,17 @@ project-erp/
 - 신규 프로젝트이므로 기존 코드 영향 없음.
 - Phase 2 이후 기능(WBS, 하드웨어/소프트웨어 관리 등)은 모두 projects 테이블을 참조하므로, projects 스키마를 안정적으로 설계하는 것이 중요하다.
 
+## 7.5 영향 범위 분석 (Phase 2 — 일정 관리)
+
+- **신규 추가**: models(wbs_item, milestone), schemas(schedule), services(schedule_service), api/routes(schedule), Alembic 마이그레이션 1건, 프론트 프로젝트 상세 내 일정 섹션.
+- **기존 코드 변경 최소화**:
+  - `app/models/__init__.py` — 신규 모델 export 추가만
+  - `app/main.py` — 라우터 등록 1줄 추가만
+  - `frontend/src/pages/ProjectDetailPage.tsx` — 일정 섹션 컴포넌트 삽입
+  - Phase 1 테이블 스키마 변경 없음 → 기존 시험에 영향 없음
+- **재사용**: change_log_service(일정 변경 이력), require_roles(권한), Page(페이지네이션 불필요 — 프로젝트당 목록 전체 반환).
+- **위험 요소**: WBS 계층의 순환 참조 → 서비스 계층에서 조상 탐색으로 차단. 담당자 본인 수정 권한(REQ-WBS-008)은 라우터가 아닌 서비스에서 필드 단위로 제한.
+
 ## 8. 확인 필요
 
 - 배포 대상 서버 환경(사내 서버/클라우드) → **확인 필요**

@@ -115,7 +115,43 @@ projects  1 ── N contracts
 (모든 엔티티) ── N change_logs
 ```
 
-## 5. 확장 고려 (Phase 2+)
+## 5. Phase 2 테이블 — 일정 관리
 
-- Phase 2: wbs_items, milestones 테이블이 projects.id 를 FK로 참조 예정.
+### 5.1 wbs_items — WBS 항목
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| parent_id | BIGINT | FK → wbs_items.id, NULL | 상위 항목 (NULL = 최상위) |
+| name | VARCHAR(200) | NOT NULL | 작업명 |
+| assignee_id | BIGINT | FK → users.id, NULL | 담당자 |
+| start_date | DATE | NULL | 계획 시작일 |
+| end_date | DATE | NULL | 계획 종료일 |
+| progress | SMALLINT | NOT NULL, default 0 | 진척률 0~100 |
+| status | VARCHAR(20) | NOT NULL, default 'TODO' | TODO / IN_PROGRESS / DONE |
+| sort_order | INTEGER | NOT NULL, default 0 | 같은 계층 내 정렬 순서 |
+| is_active | BOOLEAN | NOT NULL, default true | 논리 삭제 |
+
+- INDEX(project_id), INDEX(parent_id)
+- **지연 판정(is_delayed)**: `end_date < 오늘 AND status != 'DONE'` — 컬럼이 아닌 계산 필드
+
+### 5.2 milestones — 마일스톤
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| name | VARCHAR(200) | NOT NULL | |
+| due_date | DATE | NOT NULL | 목표일 |
+| status | VARCHAR(20) | NOT NULL, default 'PENDING' | PENDING / ACHIEVED |
+| achieved_date | DATE | NULL | 달성일 |
+| note | TEXT | NULL | |
+| is_active | BOOLEAN | NOT NULL, default true | 논리 삭제 |
+
+- INDEX(project_id)
+- **지연 판정**: `due_date < 오늘 AND status = 'PENDING'` — 계산 필드
+
+## 6. 확장 고려 (Phase 3+)
+
 - Phase 3: hw_boards, sw_modules, sw_versions 등도 projects.id 기준으로 연결 → "프로젝트 중심 추적" 원칙 유지.

@@ -71,6 +71,43 @@ ON_HOLD → IN_PROGRESS, CANCELED
 COMPLETED, CANCELED → (전이 불가)
 ```
 
+## 6.5 일정 관리 (Phase 2)
+
+### WBS
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/wbs | WBS 목록 (활성 항목, 계층 정렬, is_delayed 포함) | 로그인 |
+| POST | /api/projects/{id}/wbs | WBS 항목 등록 | admin, manager |
+| PATCH | /api/projects/{id}/wbs/{item_id} | 항목 수정 (이름, 담당자, 기간, 진척률, 상태, 순서) | admin, manager, 담당자 본인(진척률·상태만) |
+| PATCH | /api/projects/{id}/wbs/{item_id}/deactivate | 논리 삭제 (하위 항목 포함) | admin, manager |
+
+- 진척률 100 입력 시 상태를 DONE으로 자동 처리 (REQ-WBS-007)
+- parent_id는 같은 프로젝트의 활성 항목만 지정 가능, 자기 자신·순환 참조 거부
+- 기간(start_date/end_date) 변경 시 change_logs에 UPDATE 기록 (REQ-WBS-005)
+
+### 마일스톤
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/milestones | 마일스톤 목록 (is_delayed 포함) | 로그인 |
+| POST | /api/projects/{id}/milestones | 등록 | admin, manager |
+| PATCH | /api/projects/{id}/milestones/{ms_id} | 수정 | admin, manager |
+| PATCH | /api/projects/{id}/milestones/{ms_id}/achieve | 달성 처리 (달성일 기록) | admin, manager |
+| PATCH | /api/projects/{id}/milestones/{ms_id}/deactivate | 논리 삭제 | admin, manager |
+
+### 일정 요약
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/schedule/summary | 전체 진척률, WBS 지연 수, 마일스톤 지연 수 | 로그인 |
+
+응답 예:
+
+```json
+{ "progress": 42.5, "wbs_total": 8, "wbs_delayed": 2, "milestone_total": 3, "milestone_delayed": 1 }
+```
+
 ## 7. 변경 이력 (change-logs)
 
 | Method | Path | 설명 | 권한 |
