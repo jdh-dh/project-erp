@@ -108,6 +108,36 @@ COMPLETED, CANCELED → (전이 불가)
 { "progress": 42.5, "wbs_total": 8, "wbs_delayed": 2, "milestone_total": 3, "milestone_delayed": 1 }
 ```
 
+## 6.6 하드웨어 관리 (Phase 3)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/hw/boards | 보드 목록 (활성) | 로그인 |
+| POST | /api/projects/{id}/hw/boards | 보드 등록 (이름+리비전 중복 시 409) | admin, manager |
+| GET | /api/projects/{id}/hw/boards/{board_id} | 보드 상세 (BOM, 제작 이력 포함) | 로그인 |
+| PATCH | /api/projects/{id}/hw/boards/{board_id} | 보드 수정 (상태 포함) | admin, manager |
+| PATCH | /api/projects/{id}/hw/boards/{board_id}/deactivate | 논리 삭제 (BOM 연쇄) | admin, manager |
+| POST | /api/projects/{id}/hw/boards/{board_id}/bom | BOM 부품 추가 | admin, manager |
+| PATCH | /api/projects/{id}/hw/boards/{board_id}/bom/{item_id} | BOM 부품 수정 | admin, manager |
+| PATCH | /api/projects/{id}/hw/boards/{board_id}/bom/{item_id}/deactivate | BOM 부품 삭제 | admin, manager |
+| POST | /api/projects/{id}/hw/boards/{board_id}/fabrications | 제작 이력 추가 | admin, manager |
+
+## 6.7 소프트웨어 관리 (Phase 3)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/sw/modules | 모듈 목록 | 로그인 |
+| POST | /api/projects/{id}/sw/modules | 모듈 등록 (이름 중복 시 409) | admin, manager |
+| GET | /api/projects/{id}/sw/modules/{module_id} | 모듈 상세 (버전 목록 포함) | 로그인 |
+| PATCH | /api/projects/{id}/sw/modules/{module_id} | 모듈 수정 | admin, manager |
+| PATCH | /api/projects/{id}/sw/modules/{module_id}/deactivate | 논리 삭제 | admin, manager |
+| POST | /api/projects/{id}/sw/modules/{module_id}/versions | 버전 등록 (중복 시 409) | admin, manager |
+| GET | /api/projects/{id}/sw/modules/{module_id}/versions/{version_id} | 버전 상세 (빌드/배포 이력 포함) | 로그인 |
+| PATCH | /api/projects/{id}/sw/modules/{module_id}/versions/{version_id} | 버전 수정 | admin, manager |
+| PATCH | .../versions/{version_id}/release | 릴리즈 처리 (릴리즈일 기록, 중복 릴리즈 400) | admin, manager |
+| POST | .../versions/{version_id}/builds | 빌드 이력 추가 (커밋 해시 포함) | admin, manager |
+| POST | .../versions/{version_id}/deployments | 배포 이력 추가 | admin, manager |
+
 ## 7. 변경 이력 (change-logs)
 
 | Method | Path | 설명 | 권한 |

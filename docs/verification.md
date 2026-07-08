@@ -1,5 +1,49 @@
 # 검증 문서 (verification.md)
 
+## Phase 3 검증 결과 — 하드웨어/소프트웨어 관리
+
+- 검증일: 2026-07-08
+- 상태: **검증 완료**
+
+### 시험 결과
+
+- 백엔드 pytest **60건 전체 통과** (Phase 3 신규 12건 포함), 커버리지 93% (서비스 계층 80% 이상)
+- 프론트 빌드(TypeScript 타입 검사)·Vitest 통과
+
+| 계획 ID | 수행 테스트 | 결과 |
+|---------|-------------|------|
+| UT-HW-01 | test_hardware_api.py::TestBoard::test_create_and_duplicate, test_status_change | 통과 |
+| UT-HW-02 | TestBoard::test_bom_update_and_validation | 통과 |
+| UT-HW-03 | TestBoard::test_deactivate_cascades_bom | 통과 |
+| UT-HW-04 | TestBoard::test_full_flow_with_history | 통과 |
+| UT-SW-01 | test_software_api.py::TestModule::test_create_and_duplicate, TestVersion::test_deactivate_module_hides_versions | 통과 |
+| UT-SW-02 | TestVersion::test_version_duplicate | 통과 |
+| UT-SW-03 | TestVersion::test_release | 통과 |
+| UT-SW-04 | TestVersion::test_full_flow | 통과 |
+| IT-13 | TestBoard::test_full_flow_with_history | 통과 |
+| IT-14 | TestVersion::test_full_flow | 통과 |
+| IT-15 | TestBoard/TestModule::test_member_cannot_create | 통과 |
+
+### E2E 수동 검증
+
+실서버(uvicorn + Vite + PostgreSQL 16) 기동 후 확인:
+
+1. API: 보드 등록 → BOM 2건 → 제작 이력 → 모듈 등록(GitHub URL) → 버전 → 빌드(커밋 해시) → 배포(FIELD) → 릴리즈 처리(릴리즈일 기록) — 정상
+2. UI: 프로젝트 상세의 하드웨어/소프트웨어 섹션 — 보드 펼침(BOM·제작 이력·추가 폼), 모듈 펼침(버전·릴리즈 배지), 버전 펼침(빌드·배포 이력) 정상 렌더링
+
+### 요구사항 충족
+
+| 요구사항 | 충족 여부 |
+|----------|-----------|
+| REQ-HW-001~007 | 충족 (보드 CRUD, 상태, 이름+리비전 중복 409, BOM, 제작 이력, 이력 기록, 논리삭제 연쇄) |
+| REQ-SW-001~009 | 충족 (모듈 CRUD, 유형, 중복 409, 버전, 릴리즈 처리, 빌드/배포 이력, repo_url·커밋 해시, 논리삭제) |
+
+### 잔여 사항
+
+- GitHub API 실연동(커밋/릴리즈 자동 조회)은 저장소 URL·커밋 해시 기록으로 대체 — 실연동 필요 여부 **확인 필요**
+
+---
+
 ## Phase 2 검증 결과 — 일정 관리
 
 - 검증일: 2026-07-07

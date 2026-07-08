@@ -5,7 +5,16 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routes import auth, change_logs, customers, projects, schedule, users
+from app.api.routes import (
+    auth,
+    change_logs,
+    customers,
+    hardware,
+    projects,
+    schedule,
+    software,
+    users,
+)
 from app.core.config import settings
 from app.core.exceptions import AppError
 from app.core.logging import get_logger, setup_logging
@@ -65,6 +74,8 @@ def create_app() -> FastAPI:
         customers.router,
         projects.router,
         schedule.router,
+        hardware.router,
+        software.router,
         change_logs.router,
     ):
         app.include_router(router, prefix="/api")

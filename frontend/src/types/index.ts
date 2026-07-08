@@ -122,6 +122,84 @@ export interface ScheduleSummary {
   milestone_delayed: number;
 }
 
+export type BoardStatus = "DESIGN" | "PROTOTYPE" | "PRODUCTION" | "OBSOLETE";
+
+export interface HwBoard {
+  id: number;
+  name: string;
+  revision: string;
+  status: BoardStatus;
+  description: string | null;
+}
+
+export interface BomItem {
+  id: number;
+  part_name: string;
+  part_number: string | null;
+  manufacturer: string | null;
+  quantity: number;
+  reference: string | null;
+  note: string | null;
+}
+
+export interface Fabrication {
+  id: number;
+  fab_date: string;
+  quantity: number;
+  vendor: string | null;
+  result: "OK" | "NG" | "PARTIAL";
+  note: string | null;
+}
+
+export interface HwBoardDetail extends HwBoard {
+  bom_items: BomItem[];
+  fabrications: Fabrication[];
+}
+
+export type ModuleType = "FIRMWARE" | "APP" | "SERVER" | "LIBRARY";
+export type VersionStatus = "DEVELOP" | "RELEASED" | "DEPRECATED";
+
+export interface SwModule {
+  id: number;
+  name: string;
+  module_type: ModuleType;
+  repo_url: string | null;
+  description: string | null;
+}
+
+export interface SwVersion {
+  id: number;
+  version: string;
+  status: VersionStatus;
+  released_date: string | null;
+  note: string | null;
+}
+
+export interface SwModuleDetail extends SwModule {
+  versions: SwVersion[];
+}
+
+export interface SwBuild {
+  id: number;
+  build_no: string;
+  commit_hash: string | null;
+  built_at: string;
+  result: "SUCCESS" | "FAIL";
+  note: string | null;
+}
+
+export interface SwDeployment {
+  id: number;
+  environment: "DEV" | "STAGE" | "PROD" | "FIELD";
+  deployed_at: string;
+  note: string | null;
+}
+
+export interface SwVersionDetail extends SwVersion {
+  builds: SwBuild[];
+  deployments: SwDeployment[];
+}
+
 export interface ChangeLog {
   id: number;
   entity_type: string;

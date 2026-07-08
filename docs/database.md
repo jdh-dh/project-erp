@@ -152,6 +152,106 @@ projects  1 ── N contracts
 - INDEX(project_id)
 - **지연 판정**: `due_date < 오늘 AND status = 'PENDING'` — 계산 필드
 
-## 6. 확장 고려 (Phase 3+)
+## 6. Phase 3 테이블 — 하드웨어/소프트웨어 관리
 
-- Phase 3: hw_boards, sw_modules, sw_versions 등도 projects.id 기준으로 연결 → "프로젝트 중심 추적" 원칙 유지.
+### 6.1 hw_boards — 보드
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| name | VARCHAR(200) | NOT NULL | 보드명 |
+| revision | VARCHAR(50) | NOT NULL | 리비전 (예: A0, B1) |
+| status | VARCHAR(20) | NOT NULL, default 'DESIGN' | DESIGN / PROTOTYPE / PRODUCTION / OBSOLETE |
+| description | TEXT | NULL | 회로/PCB 관련 설명 |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- UNIQUE(project_id, name, revision), INDEX(project_id)
+
+### 6.2 bom_items — BOM(부품)
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| board_id | BIGINT | FK → hw_boards.id, NOT NULL | |
+| part_name | VARCHAR(200) | NOT NULL | 부품명 |
+| part_number | VARCHAR(100) | NULL | 부품번호 |
+| manufacturer | VARCHAR(100) | NULL | 제조사 |
+| quantity | INTEGER | NOT NULL, default 1 | 수량 (1 이상) |
+| reference | VARCHAR(100) | NULL | 위치기호 (R1, C3 등) |
+| note | TEXT | NULL | |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- INDEX(board_id)
+
+### 6.3 hw_fabrications — 제작 이력
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| board_id | BIGINT | FK → hw_boards.id, NOT NULL | |
+| fab_date | DATE | NOT NULL | 제작일 |
+| quantity | INTEGER | NOT NULL | 제작 수량 |
+| vendor | VARCHAR(200) | NULL | 제작처 |
+| result | VARCHAR(20) | NOT NULL, default 'OK' | OK / NG / PARTIAL |
+| note | TEXT | NULL | |
+
+- INDEX(board_id)
+
+### 6.4 sw_modules — SW 모듈
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| name | VARCHAR(200) | NOT NULL | 모듈명 |
+| module_type | VARCHAR(20) | NOT NULL | FIRMWARE / APP / SERVER / LIBRARY |
+| repo_url | VARCHAR(300) | NULL | GitHub 저장소 URL (REQ-SW-008) |
+| description | TEXT | NULL | |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- UNIQUE(project_id, name), INDEX(project_id)
+
+### 6.5 sw_versions — 버전
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| module_id | BIGINT | FK → sw_modules.id, NOT NULL | |
+| version | VARCHAR(50) | NOT NULL | 예: 1.2.0 |
+| status | VARCHAR(20) | NOT NULL, default 'DEVELOP' | DEVELOP / RELEASED / DEPRECATED |
+| released_date | DATE | NULL | 릴리즈 처리 시 기록 |
+| note | TEXT | NULL | 변경 내용 |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- UNIQUE(module_id, version), INDEX(module_id)
+
+### 6.6 sw_builds — 빌드 이력
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| version_id | BIGINT | FK → sw_versions.id, NOT NULL | |
+| build_no | VARCHAR(50) | NOT NULL | 빌드 번호 |
+| commit_hash | VARCHAR(64) | NULL | GitHub 커밋 해시 |
+| built_at | TIMESTAMPTZ | NOT NULL, default now() | |
+| result | VARCHAR(20) | NOT NULL, default 'SUCCESS' | SUCCESS / FAIL |
+| note | TEXT | NULL | |
+
+- INDEX(version_id)
+
+### 6.7 sw_deployments — 배포 이력
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| version_id | BIGINT | FK → sw_versions.id, NOT NULL | |
+| environment | VARCHAR(20) | NOT NULL | DEV / STAGE / PROD / FIELD |
+| deployed_at | TIMESTAMPTZ | NOT NULL, default now() | |
+| note | TEXT | NULL | |
+
+- INDEX(version_id)
+
+## 7. 확장 고려 (Phase 4+)
+
+- Phase 4: 시험(test_cases/test_runs), 이슈(issues), 문서(documents) 테이블도 projects.id 기준으로 연결 → "프로젝트 중심 추적" 원칙 유지.

@@ -1,16 +1,28 @@
 import client, { setTokens } from "./client";
 import type {
+  BoardStatus,
+  BomItem,
   ChangeLog,
   Contact,
   Contract,
   Customer,
   CustomerDetail,
+  Fabrication,
+  HwBoard,
+  HwBoardDetail,
   Milestone,
+  ModuleType,
   Page,
   Project,
   ProjectDetail,
   ProjectStatus,
   ScheduleSummary,
+  SwBuild,
+  SwDeployment,
+  SwModule,
+  SwModuleDetail,
+  SwVersion,
+  SwVersionDetail,
   User,
   WbsItem,
   WbsStatus,
@@ -196,6 +208,136 @@ export async function fetchScheduleSummary(
   projectId: number
 ): Promise<ScheduleSummary> {
   return (await client.get(`/projects/${projectId}/schedule/summary`)).data;
+}
+
+// ---- hardware ----
+export async function fetchBoards(projectId: number): Promise<HwBoard[]> {
+  return (await client.get(`/projects/${projectId}/hw/boards`)).data;
+}
+
+export async function fetchBoard(
+  projectId: number,
+  boardId: number
+): Promise<HwBoardDetail> {
+  return (await client.get(`/projects/${projectId}/hw/boards/${boardId}`)).data;
+}
+
+export async function createBoard(
+  projectId: number,
+  body: { name: string; revision: string; description?: string }
+): Promise<HwBoardDetail> {
+  return (await client.post(`/projects/${projectId}/hw/boards`, body)).data;
+}
+
+export async function updateBoard(
+  projectId: number,
+  boardId: number,
+  body: Partial<{ name: string; revision: string; status: BoardStatus; description: string }>
+): Promise<HwBoardDetail> {
+  return (await client.patch(`/projects/${projectId}/hw/boards/${boardId}`, body)).data;
+}
+
+export async function addBomItem(
+  projectId: number,
+  boardId: number,
+  body: {
+    part_name: string;
+    part_number?: string;
+    manufacturer?: string;
+    quantity: number;
+    reference?: string;
+  }
+): Promise<BomItem> {
+  return (await client.post(`/projects/${projectId}/hw/boards/${boardId}/bom`, body)).data;
+}
+
+export async function addFabrication(
+  projectId: number,
+  boardId: number,
+  body: { fab_date: string; quantity: number; vendor?: string; result?: string }
+): Promise<Fabrication> {
+  return (
+    await client.post(`/projects/${projectId}/hw/boards/${boardId}/fabrications`, body)
+  ).data;
+}
+
+// ---- software ----
+export async function fetchModules(projectId: number): Promise<SwModule[]> {
+  return (await client.get(`/projects/${projectId}/sw/modules`)).data;
+}
+
+export async function fetchModule(
+  projectId: number,
+  moduleId: number
+): Promise<SwModuleDetail> {
+  return (await client.get(`/projects/${projectId}/sw/modules/${moduleId}`)).data;
+}
+
+export async function createModule(
+  projectId: number,
+  body: { name: string; module_type: ModuleType; repo_url?: string; description?: string }
+): Promise<SwModuleDetail> {
+  return (await client.post(`/projects/${projectId}/sw/modules`, body)).data;
+}
+
+export async function createVersion(
+  projectId: number,
+  moduleId: number,
+  body: { version: string; note?: string }
+): Promise<SwVersion> {
+  return (
+    await client.post(`/projects/${projectId}/sw/modules/${moduleId}/versions`, body)
+  ).data;
+}
+
+export async function fetchVersion(
+  projectId: number,
+  moduleId: number,
+  versionId: number
+): Promise<SwVersionDetail> {
+  return (
+    await client.get(`/projects/${projectId}/sw/modules/${moduleId}/versions/${versionId}`)
+  ).data;
+}
+
+export async function releaseVersion(
+  projectId: number,
+  moduleId: number,
+  versionId: number
+): Promise<SwVersion> {
+  return (
+    await client.patch(
+      `/projects/${projectId}/sw/modules/${moduleId}/versions/${versionId}/release`
+    )
+  ).data;
+}
+
+export async function addBuild(
+  projectId: number,
+  moduleId: number,
+  versionId: number,
+  body: { build_no: string; commit_hash?: string; result?: string; note?: string }
+): Promise<SwBuild> {
+  return (
+    await client.post(
+      `/projects/${projectId}/sw/modules/${moduleId}/versions/${versionId}/builds`,
+      body
+    )
+  ).data;
+}
+
+export async function addDeployment(
+  projectId: number,
+  moduleId: number,
+  versionId: number,
+  body: { environment: string; note?: string }
+): Promise<SwDeployment> {
+  return (
+    await client.post(
+      `/projects/${projectId}/sw/modules/${moduleId}/versions/${versionId}/deployments`,
+      body
+    )
+  ).data;
 }
 
 // ---- change logs ----

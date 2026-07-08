@@ -11,8 +11,10 @@ import {
   setProjectMembers,
 } from "../api/erp";
 import { useAuth } from "../auth/AuthContext";
+import HwSection from "../components/HwSection";
 import ScheduleSection from "../components/ScheduleSection";
 import StatusBadge from "../components/StatusBadge";
+import SwSection from "../components/SwSection";
 import { TYPE_LABELS, allowedNextStatuses, statusLabel } from "../utils/labels";
 import type { ProjectStatus } from "../types";
 
@@ -154,6 +156,10 @@ export default function ProjectDetailPage() {
       </div>
 
       <ScheduleSection projectId={projectId} />
+
+      <HwSection projectId={projectId} />
+
+      <SwSection projectId={projectId} />
 
       <div className="card">
         <h3>참여자</h3>

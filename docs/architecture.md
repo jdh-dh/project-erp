@@ -106,6 +106,13 @@ project-erp/
 - **재사용**: change_log_service(일정 변경 이력), require_roles(권한), Page(페이지네이션 불필요 — 프로젝트당 목록 전체 반환).
 - **위험 요소**: WBS 계층의 순환 참조 → 서비스 계층에서 조상 탐색으로 차단. 담당자 본인 수정 권한(REQ-WBS-008)은 라우터가 아닌 서비스에서 필드 단위로 제한.
 
+## 7.6 영향 범위 분석 (Phase 3 — 하드웨어/소프트웨어 관리)
+
+- **신규 추가**: models(hw_board, bom_item, hw_fabrication, sw_module, sw_version, sw_build, sw_deployment), schemas(hardware, software), services(hardware_service, software_service), api/routes(hardware, software), Alembic 마이그레이션 1건, 프론트 HwSection/SwSection 컴포넌트.
+- **기존 코드 변경 최소화**: models/__init__.py export 추가, main.py 라우터 등록, ProjectDetailPage에 섹션 삽입. Phase 1·2 스키마 변경 없음 → 기존 시험 영향 없음.
+- **재사용**: change_log_service, require_roles, 논리 삭제 패턴(Phase 2와 동일).
+- **GitHub 연동 범위**: 1단계는 저장소 URL·커밋 해시 기록. GitHub API 실연동(커밋/릴리즈 자동 조회)은 별도 승인 후 진행 — **확인 필요**.
+
 ## 8. 확인 필요
 
 - 배포 대상 서버 환경(사내 서버/클라우드) → **확인 필요**
