@@ -6,6 +6,7 @@ import CustomerListPage from "./pages/CustomerListPage";
 import LoginPage from "./pages/LoginPage";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
 import ProjectListPage from "./pages/ProjectListPage";
+import ProjectReportPage from "./pages/ProjectReportPage";
 import UserListPage from "./pages/UserListPage";
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/projects" element={<ProjectListPage />} />
         <Route path="/projects/:id" element={<ProjectDetailPage />} />
+        <Route path="/projects/:id/report" element={<ProjectReportPage />} />
         <Route path="/customers" element={<CustomerListPage />} />
         <Route path="/customers/:id" element={<CustomerDetailPage />} />
         <Route path="/users" element={<UserListPage />} />

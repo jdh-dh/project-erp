@@ -270,6 +270,54 @@ export interface ProjectDocument {
   updated_at: string;
 }
 
+export interface Release {
+  id: number;
+  version: string;
+  title: string;
+  release_date: string;
+  content: string | null;
+  created_by: number;
+  creator_name: string;
+}
+
+export type CostCategory = "LABOR" | "MATERIAL" | "OUTSOURCING" | "EQUIPMENT" | "ETC";
+
+export interface ProjectCost {
+  id: number;
+  cost_date: string;
+  category: CostCategory;
+  item: string;
+  amount: string;
+  note: string | null;
+  created_by: number;
+  creator_name: string;
+}
+
+export interface CostSummary {
+  total: string;
+  by_category: Record<string, string>;
+}
+
+export interface ProjectReport {
+  project: {
+    code: string;
+    name: string;
+    project_type: ProjectType;
+    status: ProjectStatus;
+    customer_name: string;
+    manager_name: string;
+    start_date: string | null;
+    end_date: string | null;
+  };
+  schedule: ScheduleSummary;
+  issues: { total: number; open: number; in_progress: number; resolved: number; closed: number };
+  tests: { total: number; passed: number; failed: number; blocked: number; not_run: number };
+  hardware: { boards: number };
+  software: { modules: number; versions: number; released_versions: number };
+  releases: number;
+  costs: CostSummary;
+}
+
 export interface ChangeLog {
   id: number;
   entity_type: string;

@@ -1,5 +1,41 @@
 # 검증 문서 (verification.md)
 
+## Phase 5 검증 결과 — 릴리즈 이력/보고서/비용
+
+- 검증일: 2026-07-08
+- 상태: **검증 완료**
+
+### 시험 결과
+
+- 백엔드 pytest **76건 전체 통과** (Phase 5 신규 7건 포함), 커버리지 94%
+- 프론트 빌드(TypeScript 타입 검사)·Vitest 통과
+
+| 계획 ID | 수행 테스트 (tests/test_phase5_api.py) | 결과 |
+|---------|----------------------------------------|------|
+| UT-REL-01 | TestReleases::test_release_crud (중복 409, 이력, 삭제 후 재등록 포함) | 통과 |
+| UT-COST-01 | TestCosts::test_cost_validation | 통과 |
+| UT-COST-02 | TestCosts::test_cost_summary_excludes_inactive | 통과 |
+| UT-RPT-01 | TestReport::test_full_report | 통과 |
+| IT-19 | TestReport::test_full_report (일정/이슈/시험/HW/SW/릴리즈/비용 전 항목 집계 검증) | 통과 |
+| IT-20 | TestReleases/TestCosts::test_member_cannot_create | 통과 |
+
+### E2E 수동 검증
+
+실서버(uvicorn + Vite + PostgreSQL 16) 기동 후 확인:
+
+1. API: 릴리즈 등록 → 비용 2건(자재비/인건비) 등록 → 보고서 조회: 일정(진척률 50%, 지연 1건), 이슈(처리중 1건), 시험(합격 1건), HW/SW 현황, 비용 총액 12,500,000원·분류별 합계 — 전부 정확
+2. UI: 프로젝트 보고서 페이지(/projects/1/report) — 기본 정보, 일정/이슈/시험/HW·SW·릴리즈/비용 현황 표, 인쇄 버튼 정상 렌더링
+
+### 요구사항 충족
+
+| 요구사항 | 충족 여부 |
+|----------|-----------|
+| REQ-REL-001~003 | 충족 (버전 중복 409, 등록자 자동, 이력, 논리삭제) |
+| REQ-RPT-001~003 | 충족 (종합 집계, 최근 결과 기준 시험 통계, 실시간 집계) |
+| REQ-COST-001~004 | 충족 (분류 5종, 금액 > 0, 총액·분류별 합계, 비활성 제외, 등록자·이력) |
+
+---
+
 ## Phase 4 검증 결과 — 시험/이슈/문서 관리
 
 - 검증일: 2026-07-08

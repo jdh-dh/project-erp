@@ -21,13 +21,18 @@ import type {
   SwDeployment,
   SwModule,
   SwModuleDetail,
+  CostCategory,
+  CostSummary,
   DocType,
   Issue,
   IssueDetail,
   IssueSeverity,
   IssueStatus,
   IssueType,
+  ProjectCost,
   ProjectDocument,
+  ProjectReport,
+  Release,
   SwVersion,
   SwVersionDetail,
   TestCase,
@@ -483,6 +488,39 @@ export async function updateDocument(
   body: Partial<{ title: string; version: string; file_url: string; description: string }>
 ): Promise<ProjectDocument> {
   return (await client.patch(`/projects/${projectId}/documents/${docId}`, body)).data;
+}
+
+// ---- releases ----
+export async function fetchReleases(projectId: number): Promise<Release[]> {
+  return (await client.get(`/projects/${projectId}/releases`)).data;
+}
+
+export async function createRelease(
+  projectId: number,
+  body: { version: string; title: string; release_date: string; content?: string }
+): Promise<Release> {
+  return (await client.post(`/projects/${projectId}/releases`, body)).data;
+}
+
+// ---- costs ----
+export async function fetchCosts(projectId: number): Promise<ProjectCost[]> {
+  return (await client.get(`/projects/${projectId}/costs`)).data;
+}
+
+export async function fetchCostSummary(projectId: number): Promise<CostSummary> {
+  return (await client.get(`/projects/${projectId}/costs/summary`)).data;
+}
+
+export async function createCost(
+  projectId: number,
+  body: { cost_date: string; category: CostCategory; item: string; amount: string; note?: string }
+): Promise<ProjectCost> {
+  return (await client.post(`/projects/${projectId}/costs`, body)).data;
+}
+
+// ---- report ----
+export async function fetchProjectReport(projectId: number): Promise<ProjectReport> {
+  return (await client.get(`/projects/${projectId}/report`)).data;
 }
 
 // ---- change logs ----

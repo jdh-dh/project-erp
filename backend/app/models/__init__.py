@@ -6,6 +6,8 @@ from app.models.hardware import BomItem, HwBoard, HwFabrication
 from app.models.issue import Issue
 from app.models.milestone import Milestone
 from app.models.project import Project, ProjectMember
+from app.models.project_cost import ProjectCost
+from app.models.release import Release
 from app.models.software import SwBuild, SwDeployment, SwModule, SwVersion
 from app.models.testing import TestCase, TestRun
 from app.models.user import User
@@ -23,7 +25,9 @@ __all__ = [
     "Issue",
     "Milestone",
     "Project",
+    "ProjectCost",
     "ProjectMember",
+    "Release",
     "SwBuild",
     "SwDeployment",
     "SwModule",

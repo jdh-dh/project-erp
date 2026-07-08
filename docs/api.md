@@ -177,6 +177,46 @@ CLOSED → (전이 불가)
 | PATCH | /api/projects/{id}/documents/{doc_id} | 수정 (버전, 링크 등) | admin, manager |
 | PATCH | /api/projects/{id}/documents/{doc_id}/deactivate | 논리 삭제 | admin, manager |
 
+## 6.11 릴리즈 이력 (Phase 5)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/releases | 릴리즈 목록 (릴리즈일 역순) | 로그인 |
+| POST | /api/projects/{id}/releases | 릴리즈 등록 (버전 중복 409, 등록자 자동) | admin, manager |
+| PATCH | /api/projects/{id}/releases/{rel_id} | 수정 | admin, manager |
+| PATCH | /api/projects/{id}/releases/{rel_id}/deactivate | 논리 삭제 | admin, manager |
+
+## 6.12 비용 관리 (Phase 5)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/costs | 비용 목록 (분류 필터 ?category=) | 로그인 |
+| POST | /api/projects/{id}/costs | 비용 등록 (금액 > 0, 등록자 자동) | admin, manager |
+| PATCH | /api/projects/{id}/costs/{cost_id} | 수정 | admin, manager |
+| PATCH | /api/projects/{id}/costs/{cost_id}/deactivate | 논리 삭제 | admin, manager |
+| GET | /api/projects/{id}/costs/summary | 총액·분류별 합계 (비활성 제외) | 로그인 |
+
+## 6.13 프로젝트 보고서 (Phase 5)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/report | 종합 보고서 (실시간 집계) | 로그인 |
+
+응답 예:
+
+```json
+{
+  "project": { "code": "PRJ-001", "name": "...", "status": "IN_PROGRESS", "customer_name": "...", "manager_name": "...", "start_date": "...", "end_date": "..." },
+  "schedule": { "progress": 42.5, "wbs_total": 8, "wbs_delayed": 2, "milestone_total": 3, "milestone_delayed": 1 },
+  "issues": { "total": 10, "open": 2, "in_progress": 3, "resolved": 4, "closed": 1 },
+  "tests": { "total": 12, "passed": 8, "failed": 2, "blocked": 1, "not_run": 1 },
+  "hardware": { "boards": 3 },
+  "software": { "modules": 2, "versions": 5, "released_versions": 3 },
+  "releases": 2,
+  "costs": { "total": "12500000", "by_category": { "LABOR": "8000000", "MATERIAL": "4500000" } }
+}
+```
+
 ## 7. 변경 이력 (change-logs)
 
 | Method | Path | 설명 | 권한 |

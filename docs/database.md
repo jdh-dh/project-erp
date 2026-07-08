@@ -319,6 +319,39 @@ projects  1 ── N contracts
 
 - INDEX(project_id)
 
-## 8. 확장 고려 (Phase 5+)
+## 8. Phase 5 테이블 — 릴리즈 이력/비용
 
-- Phase 5: 릴리즈 이력, 보고서, 비용·자원 테이블도 projects.id 기준으로 연결 → "프로젝트 중심 추적" 원칙 유지.
+### 8.1 releases — 릴리즈 이력
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| version | VARCHAR(50) | NOT NULL | 릴리즈 버전 |
+| title | VARCHAR(300) | NOT NULL | 릴리즈 제목 |
+| release_date | DATE | NOT NULL | 릴리즈일 |
+| content | TEXT | NULL | 릴리즈 내용 (변경 사항) |
+| created_by | BIGINT | FK → users.id, NOT NULL | 등록자 (자동) |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- UNIQUE(project_id, version) — 활성 항목 기준 서비스 계층 검증, INDEX(project_id)
+
+### 8.2 project_costs — 프로젝트 비용
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| cost_date | DATE | NOT NULL | 비용 발생일 |
+| category | VARCHAR(20) | NOT NULL | LABOR / MATERIAL / OUTSOURCING / EQUIPMENT / ETC |
+| item | VARCHAR(300) | NOT NULL | 항목명 |
+| amount | NUMERIC(15,0) | NOT NULL, > 0 | 금액(원) |
+| note | TEXT | NULL | |
+| created_by | BIGINT | FK → users.id, NOT NULL | 등록자 (자동) |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- INDEX(project_id)
+
+### 8.3 보고서
+
+보고서는 테이블에 저장하지 않고 조회 시점에 기존 테이블(projects, wbs_items, milestones, issues, test_cases/test_runs, hw_boards, sw_modules/sw_versions, releases, project_costs)을 실시간 집계한다 (REQ-RPT-003).

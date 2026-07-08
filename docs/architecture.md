@@ -121,6 +121,13 @@ project-erp/
 - **권한 특이사항**: 이슈 등록은 member 포함 전체 허용(등록자 자동 기록), 이슈 수정·상태 변경은 admin/manager/담당자 — 서비스 계층에서 검증(WBS 담당자 패턴 재사용).
 - **파일 업로드**: 문서는 링크(URL) 방식. 파일 저장소(로컬/S3) 도입은 별도 승인 필요 — **확인 필요**.
 
+## 7.8 영향 범위 분석 (Phase 5 — 릴리즈/보고서/비용)
+
+- **신규 추가**: models(release, project_cost), schemas(release, cost, report), services(release_service, cost_service, report_service), api/routes(releases, costs, report), Alembic 마이그레이션 1건, 프론트 ReleaseSection/CostSection + 보고서 페이지(/projects/:id/report).
+- **기존 코드 변경 최소화**: models/__init__.py export, main.py 라우터 등록, ProjectDetailPage 섹션·보고서 링크 추가, App.tsx 라우트 1건. Phase 1~4 스키마 변경 없음.
+- **보고서 집계**: report_service가 기존 서비스(schedule_service.schedule_summary 등)와 테이블을 읽기 전용으로 집계 — 쓰기 없음, 기존 로직 영향 없음.
+- **재사용**: change_log_service, require_roles, 논리 삭제 패턴.
+
 ## 8. 확인 필요
 
 - 배포 대상 서버 환경(사내 서버/클라우드) → **확인 필요**

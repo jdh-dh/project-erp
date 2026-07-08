@@ -8,11 +8,14 @@ from fastapi.responses import JSONResponse
 from app.api.routes import (
     auth,
     change_logs,
+    costs,
     customers,
     documents,
     hardware,
     issues,
     projects,
+    releases,
+    report,
     schedule,
     software,
     testing,
@@ -82,6 +85,9 @@ def create_app() -> FastAPI:
         testing.router,
         issues.router,
         documents.router,
+        releases.router,
+        costs.router,
+        report.router,
         change_logs.router,
     ):
         app.include_router(router, prefix="/api")

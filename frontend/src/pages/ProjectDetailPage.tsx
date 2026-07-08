@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { errorMessage } from "../api/client";
 import {
   addContract,
@@ -14,6 +14,7 @@ import { useAuth } from "../auth/AuthContext";
 import DocSection from "../components/DocSection";
 import HwSection from "../components/HwSection";
 import IssueSection from "../components/IssueSection";
+import { CostSection, ReleaseSection } from "../components/ReleaseCostSection";
 import ScheduleSection from "../components/ScheduleSection";
 import StatusBadge from "../components/StatusBadge";
 import SwSection from "../components/SwSection";
@@ -113,7 +114,12 @@ export default function ProjectDetailPage() {
   return (
     <div>
       <h2>
-        [{p.code}] {p.name} <StatusBadge status={p.status} />
+        [{p.code}] {p.name} <StatusBadge status={p.status} />{" "}
+        <Link to={`/projects/${projectId}/report`}>
+          <button className="secondary" style={{ fontSize: 13 }}>
+            보고서
+          </button>
+        </Link>
       </h2>
       {error && <div className="error">{error}</div>}
 
@@ -169,6 +175,10 @@ export default function ProjectDetailPage() {
       <IssueSection projectId={projectId} />
 
       <DocSection projectId={projectId} />
+
+      <ReleaseSection projectId={projectId} />
+
+      <CostSection projectId={projectId} />
 
       <div className="card">
         <h3>참여자</h3>
