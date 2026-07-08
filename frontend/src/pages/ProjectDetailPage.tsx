@@ -11,10 +11,13 @@ import {
   setProjectMembers,
 } from "../api/erp";
 import { useAuth } from "../auth/AuthContext";
+import DocSection from "../components/DocSection";
 import HwSection from "../components/HwSection";
+import IssueSection from "../components/IssueSection";
 import ScheduleSection from "../components/ScheduleSection";
 import StatusBadge from "../components/StatusBadge";
 import SwSection from "../components/SwSection";
+import TestSection from "../components/TestSection";
 import { TYPE_LABELS, allowedNextStatuses, statusLabel } from "../utils/labels";
 import type { ProjectStatus } from "../types";
 
@@ -160,6 +163,12 @@ export default function ProjectDetailPage() {
       <HwSection projectId={projectId} />
 
       <SwSection projectId={projectId} />
+
+      <TestSection projectId={projectId} />
+
+      <IssueSection projectId={projectId} />
+
+      <DocSection projectId={projectId} />
 
       <div className="card">
         <h3>참여자</h3>

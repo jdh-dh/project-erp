@@ -138,6 +138,45 @@ COMPLETED, CANCELED → (전이 불가)
 | POST | .../versions/{version_id}/builds | 빌드 이력 추가 (커밋 해시 포함) | admin, manager |
 | POST | .../versions/{version_id}/deployments | 배포 이력 추가 | admin, manager |
 
+## 6.8 시험 관리 (Phase 4)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/test-cases | 케이스 목록 (유형 필터 ?test_type=, 최근 결과 포함) | 로그인 |
+| POST | /api/projects/{id}/test-cases | 케이스 등록 | admin, manager |
+| GET | /api/projects/{id}/test-cases/{tc_id} | 상세 (실행 이력 포함) | 로그인 |
+| PATCH | /api/projects/{id}/test-cases/{tc_id} | 수정 | admin, manager |
+| PATCH | /api/projects/{id}/test-cases/{tc_id}/deactivate | 논리 삭제 | admin, manager |
+| POST | /api/projects/{id}/test-cases/{tc_id}/runs | 실행 결과 기록 (시험자 자동) | 로그인 |
+
+## 6.9 이슈 관리 (Phase 4)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/issues | 이슈 목록 (필터: status, issue_type, assignee_id) | 로그인 |
+| POST | /api/projects/{id}/issues | 이슈 등록 (등록자 자동) | 로그인 |
+| GET | /api/projects/{id}/issues/{issue_id} | 상세 | 로그인 |
+| PATCH | /api/projects/{id}/issues/{issue_id} | 수정 (원인 분석, 조치 결과, 담당자 등) | admin, manager, 담당자 |
+| PATCH | /api/projects/{id}/issues/{issue_id}/status | 상태 변경 (전이 규칙, RESOLVED는 resolution 필수) | admin, manager, 담당자 |
+
+### 이슈 상태 전이 규칙
+
+```
+OPEN → IN_PROGRESS, RESOLVED, CLOSED
+IN_PROGRESS → OPEN, RESOLVED, CLOSED
+RESOLVED → OPEN(재오픈), CLOSED
+CLOSED → (전이 불가)
+```
+
+## 6.10 문서 관리 (Phase 4)
+
+| Method | Path | 설명 | 권한 |
+|--------|------|------|------|
+| GET | /api/projects/{id}/documents | 문서 목록 (유형 필터 ?doc_type=) | 로그인 |
+| POST | /api/projects/{id}/documents | 문서 등록 (작성자 자동) | admin, manager |
+| PATCH | /api/projects/{id}/documents/{doc_id} | 수정 (버전, 링크 등) | admin, manager |
+| PATCH | /api/projects/{id}/documents/{doc_id}/deactivate | 논리 삭제 | admin, manager |
+
 ## 7. 변경 이력 (change-logs)
 
 | Method | Path | 설명 | 권한 |

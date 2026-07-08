@@ -21,8 +21,20 @@ import type {
   SwDeployment,
   SwModule,
   SwModuleDetail,
+  DocType,
+  Issue,
+  IssueDetail,
+  IssueSeverity,
+  IssueStatus,
+  IssueType,
+  ProjectDocument,
   SwVersion,
   SwVersionDetail,
+  TestCase,
+  TestCaseDetail,
+  TestResult,
+  TestRun,
+  TestType,
   User,
   WbsItem,
   WbsStatus,
@@ -338,6 +350,139 @@ export async function addDeployment(
       body
     )
   ).data;
+}
+
+// ---- test cases ----
+export async function fetchTestCases(
+  projectId: number,
+  testType?: string
+): Promise<TestCase[]> {
+  return (
+    await client.get(`/projects/${projectId}/test-cases`, {
+      params: { test_type: testType || undefined },
+    })
+  ).data;
+}
+
+export async function fetchTestCase(
+  projectId: number,
+  caseId: number
+): Promise<TestCaseDetail> {
+  return (await client.get(`/projects/${projectId}/test-cases/${caseId}`)).data;
+}
+
+export async function createTestCase(
+  projectId: number,
+  body: { test_type: TestType; name: string; description?: string; expected_result?: string }
+): Promise<TestCaseDetail> {
+  return (await client.post(`/projects/${projectId}/test-cases`, body)).data;
+}
+
+export async function addTestRun(
+  projectId: number,
+  caseId: number,
+  body: { run_date: string; result: TestResult; note?: string }
+): Promise<TestRun> {
+  return (
+    await client.post(`/projects/${projectId}/test-cases/${caseId}/runs`, body)
+  ).data;
+}
+
+// ---- issues ----
+export async function fetchIssues(
+  projectId: number,
+  filters: { status?: string; issue_type?: string } = {}
+): Promise<Issue[]> {
+  return (
+    await client.get(`/projects/${projectId}/issues`, {
+      params: {
+        status: filters.status || undefined,
+        issue_type: filters.issue_type || undefined,
+      },
+    })
+  ).data;
+}
+
+export async function fetchIssue(
+  projectId: number,
+  issueId: number
+): Promise<IssueDetail> {
+  return (await client.get(`/projects/${projectId}/issues/${issueId}`)).data;
+}
+
+export async function createIssue(
+  projectId: number,
+  body: {
+    issue_type: IssueType;
+    title: string;
+    description?: string;
+    severity?: IssueSeverity;
+    assignee_id?: number | null;
+  }
+): Promise<IssueDetail> {
+  return (await client.post(`/projects/${projectId}/issues`, body)).data;
+}
+
+export async function updateIssue(
+  projectId: number,
+  issueId: number,
+  body: Partial<{
+    title: string;
+    description: string;
+    severity: IssueSeverity;
+    assignee_id: number | null;
+    cause_analysis: string;
+    resolution: string;
+  }>
+): Promise<IssueDetail> {
+  return (await client.patch(`/projects/${projectId}/issues/${issueId}`, body)).data;
+}
+
+export async function changeIssueStatus(
+  projectId: number,
+  issueId: number,
+  status: IssueStatus,
+  resolution?: string
+): Promise<IssueDetail> {
+  return (
+    await client.patch(`/projects/${projectId}/issues/${issueId}/status`, {
+      status,
+      resolution,
+    })
+  ).data;
+}
+
+// ---- documents ----
+export async function fetchDocuments(
+  projectId: number,
+  docType?: string
+): Promise<ProjectDocument[]> {
+  return (
+    await client.get(`/projects/${projectId}/documents`, {
+      params: { doc_type: docType || undefined },
+    })
+  ).data;
+}
+
+export async function createDocument(
+  projectId: number,
+  body: {
+    doc_type: DocType;
+    title: string;
+    version?: string;
+    file_url?: string;
+    description?: string;
+  }
+): Promise<ProjectDocument> {
+  return (await client.post(`/projects/${projectId}/documents`, body)).data;
+}
+
+export async function updateDocument(
+  projectId: number,
+  docId: number,
+  body: Partial<{ title: string; version: string; file_url: string; description: string }>
+): Promise<ProjectDocument> {
+  return (await client.patch(`/projects/${projectId}/documents/${docId}`, body)).data;
 }
 
 // ---- change logs ----

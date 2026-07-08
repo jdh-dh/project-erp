@@ -252,6 +252,73 @@ projects  1 ── N contracts
 
 - INDEX(version_id)
 
-## 7. 확장 고려 (Phase 4+)
+## 7. Phase 4 테이블 — 시험/이슈/문서 관리
 
-- Phase 4: 시험(test_cases/test_runs), 이슈(issues), 문서(documents) 테이블도 projects.id 기준으로 연결 → "프로젝트 중심 추적" 원칙 유지.
+### 7.1 test_cases — 시험 케이스
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| test_type | VARCHAR(20) | NOT NULL | UNIT / INTEGRATION / FIELD |
+| name | VARCHAR(200) | NOT NULL | 케이스명 |
+| description | TEXT | NULL | 시험 내용 |
+| expected_result | TEXT | NULL | 기대 결과 |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- INDEX(project_id)
+- **last_result** (계산 필드): 가장 최근 test_run의 결과
+
+### 7.2 test_runs — 시험 실행 결과
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| test_case_id | BIGINT | FK → test_cases.id, NOT NULL | |
+| run_date | DATE | NOT NULL | 실행일 |
+| result | VARCHAR(20) | NOT NULL | PASS / FAIL / BLOCKED |
+| tester_id | BIGINT | FK → users.id, NOT NULL | 시험자 (기록자 자동) |
+| note | TEXT | NULL | |
+
+- INDEX(test_case_id)
+
+### 7.3 issues — 이슈
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| issue_type | VARCHAR(30) | NOT NULL | BUG / IMPROVEMENT / CUSTOMER_REQUEST / FAILURE |
+| title | VARCHAR(300) | NOT NULL | |
+| description | TEXT | NULL | |
+| severity | VARCHAR(20) | NOT NULL, default 'MEDIUM' | LOW / MEDIUM / HIGH / CRITICAL |
+| status | VARCHAR(20) | NOT NULL, default 'OPEN' | OPEN / IN_PROGRESS / RESOLVED / CLOSED |
+| reporter_id | BIGINT | FK → users.id, NOT NULL | 등록자 (자동) |
+| assignee_id | BIGINT | FK → users.id, NULL | 담당자 |
+| cause_analysis | TEXT | NULL | 원인 분석 |
+| resolution | TEXT | NULL | 조치 결과 (RESOLVED 시 필수) |
+| resolved_date | DATE | NULL | RESOLVED 처리 시 기록 |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- INDEX(project_id), INDEX(assignee_id)
+- 상태 전이: OPEN → IN_PROGRESS/RESOLVED/CLOSED, IN_PROGRESS → OPEN/RESOLVED/CLOSED, RESOLVED → OPEN(재오픈)/CLOSED, CLOSED → (전이 불가)
+
+### 7.4 documents — 문서
+
+| 컬럼 | 타입 | 제약 | 설명 |
+|------|------|------|------|
+| id | BIGSERIAL | PK | |
+| project_id | BIGINT | FK → projects.id, NOT NULL | |
+| doc_type | VARCHAR(30) | NOT NULL | REQUIREMENTS / DESIGN / INTERFACE / TEST_PLAN / VERIFICATION / RELEASE_NOTE / OTHER |
+| title | VARCHAR(300) | NOT NULL | |
+| version | VARCHAR(50) | NOT NULL, default '1.0' | 문서 버전 |
+| file_url | VARCHAR(500) | NULL | 문서 링크 (파일 업로드는 확인 필요) |
+| description | TEXT | NULL | |
+| author_id | BIGINT | FK → users.id, NOT NULL | 작성자 (자동) |
+| is_active | BOOLEAN | NOT NULL, default true | |
+
+- INDEX(project_id)
+
+## 8. 확장 고려 (Phase 5+)
+
+- Phase 5: 릴리즈 이력, 보고서, 비용·자원 테이블도 projects.id 기준으로 연결 → "프로젝트 중심 추적" 원칙 유지.

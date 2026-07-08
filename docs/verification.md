@@ -1,5 +1,49 @@
 # 검증 문서 (verification.md)
 
+## Phase 4 검증 결과 — 시험/이슈/문서 관리
+
+- 검증일: 2026-07-08
+- 상태: **검증 완료**
+
+### 시험 결과
+
+- 백엔드 pytest **69건 전체 통과** (Phase 4 신규 9건 포함), 커버리지 94%
+- 프론트 빌드(TypeScript 타입 검사)·Vitest 통과
+
+| 계획 ID | 수행 테스트 (tests/test_phase4_api.py) | 결과 |
+|---------|----------------------------------------|------|
+| UT-TC-01 | TestTestCases::test_case_crud | 통과 |
+| UT-TC-02 | TestTestCases::test_runs_and_last_result | 통과 |
+| UT-ISS-01 | TestIssues::test_member_creates_issue | 통과 |
+| UT-ISS-02 | TestIssues::test_full_flow_with_history (RESOLUTION_REQUIRED, CLOSED 전이 불가 포함) | 통과 |
+| UT-ISS-03 | TestIssues::test_assignee_permission | 통과 |
+| UT-DOC-01 | TestDocuments::test_document_flow | 통과 |
+| UT-DOC-02 | TestDocuments::test_member_cannot_create | 통과 |
+| IT-16 | TestTestCases::test_runs_and_last_result | 통과 |
+| IT-17 | TestIssues::test_full_flow_with_history | 통과 |
+| IT-18 | TestDocuments::test_document_flow | 통과 |
+
+### E2E 수동 검증
+
+실서버(uvicorn + Vite + PostgreSQL 16) 기동 후 확인:
+
+1. API: 시험 케이스 등록 → FAIL/PASS 실행 기록 → 최근 결과 PASS / 이슈 등록 → 처리중 → 원인 분석 / 문서 2건 등록 — 정상
+2. UI: 시험 관리(케이스 펼침, 실행 이력 합격/불합격 배지, 결과 기록 폼), 이슈 관리(심각도·상태 배지, 상세 펼침), 문서 관리 섹션 정상 렌더링
+
+### 요구사항 충족
+
+| 요구사항 | 충족 여부 |
+|----------|-----------|
+| REQ-TEST-001~005 | 충족 (케이스 CRUD, 유형, 실행 기록·시험자 자동, 최근 결과, 논리삭제·이력) |
+| REQ-ISS-001~008 | 충족 (유형·심각도, 상태 전이, RESOLVED 조치결과 필수·해결일, member 등록, 담당자 권한, 이력) |
+| REQ-DOC-001~005 | 충족 (유형, 버전, 링크 URL, 작성자 자동, 이력, 권한, 논리삭제) |
+
+### 잔여 사항
+
+- 문서 파일 업로드(저장소) — 링크 방식으로 대체, 필요 여부 **확인 필요**
+
+---
+
 ## Phase 3 검증 결과 — 하드웨어/소프트웨어 관리
 
 - 검증일: 2026-07-08

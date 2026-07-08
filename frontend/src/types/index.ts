@@ -200,6 +200,76 @@ export interface SwVersionDetail extends SwVersion {
   deployments: SwDeployment[];
 }
 
+export type TestType = "UNIT" | "INTEGRATION" | "FIELD";
+export type TestResult = "PASS" | "FAIL" | "BLOCKED";
+
+export interface TestRun {
+  id: number;
+  run_date: string;
+  result: TestResult;
+  tester_id: number;
+  tester_name: string;
+  note: string | null;
+}
+
+export interface TestCase {
+  id: number;
+  test_type: TestType;
+  name: string;
+  description: string | null;
+  expected_result: string | null;
+  last_result: TestResult | null;
+}
+
+export interface TestCaseDetail extends TestCase {
+  runs: TestRun[];
+}
+
+export type IssueType = "BUG" | "IMPROVEMENT" | "CUSTOMER_REQUEST" | "FAILURE";
+export type IssueSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type IssueStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+
+export interface Issue {
+  id: number;
+  issue_type: IssueType;
+  title: string;
+  severity: IssueSeverity;
+  status: IssueStatus;
+  reporter_id: number;
+  reporter_name: string;
+  assignee_id: number | null;
+  assignee_name: string | null;
+  resolved_date: string | null;
+  created_at: string;
+}
+
+export interface IssueDetail extends Issue {
+  description: string | null;
+  cause_analysis: string | null;
+  resolution: string | null;
+}
+
+export type DocType =
+  | "REQUIREMENTS"
+  | "DESIGN"
+  | "INTERFACE"
+  | "TEST_PLAN"
+  | "VERIFICATION"
+  | "RELEASE_NOTE"
+  | "OTHER";
+
+export interface ProjectDocument {
+  id: number;
+  doc_type: DocType;
+  title: string;
+  version: string;
+  file_url: string | null;
+  description: string | null;
+  author_id: number;
+  author_name: string;
+  updated_at: string;
+}
+
 export interface ChangeLog {
   id: number;
   entity_type: string;

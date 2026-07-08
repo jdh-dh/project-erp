@@ -9,10 +9,13 @@ from app.api.routes import (
     auth,
     change_logs,
     customers,
+    documents,
     hardware,
+    issues,
     projects,
     schedule,
     software,
+    testing,
     users,
 )
 from app.core.config import settings
@@ -76,6 +79,9 @@ def create_app() -> FastAPI:
         schedule.router,
         hardware.router,
         software.router,
+        testing.router,
+        issues.router,
+        documents.router,
         change_logs.router,
     ):
         app.include_router(router, prefix="/api")

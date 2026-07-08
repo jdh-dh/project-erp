@@ -113,6 +113,14 @@ project-erp/
 - **재사용**: change_log_service, require_roles, 논리 삭제 패턴(Phase 2와 동일).
 - **GitHub 연동 범위**: 1단계는 저장소 URL·커밋 해시 기록. GitHub API 실연동(커밋/릴리즈 자동 조회)은 별도 승인 후 진행 — **확인 필요**.
 
+## 7.7 영향 범위 분석 (Phase 4 — 시험/이슈/문서 관리)
+
+- **신규 추가**: models(testing, issue, document), schemas(동일), services(testing_service, issue_service, document_service), api/routes(동일), Alembic 마이그레이션 1건, 프론트 TestSection/IssueSection/DocSection.
+- **기존 코드 변경 최소화**: models/__init__.py export, main.py 라우터 등록, ProjectDetailPage 섹션 삽입. Phase 1~3 스키마 변경 없음.
+- **재사용**: change_log_service, require_roles, 논리 삭제·상태 전이 패턴(프로젝트 상태 전이와 동일 방식).
+- **권한 특이사항**: 이슈 등록은 member 포함 전체 허용(등록자 자동 기록), 이슈 수정·상태 변경은 admin/manager/담당자 — 서비스 계층에서 검증(WBS 담당자 패턴 재사용).
+- **파일 업로드**: 문서는 링크(URL) 방식. 파일 저장소(로컬/S3) 도입은 별도 승인 필요 — **확인 필요**.
+
 ## 8. 확인 필요
 
 - 배포 대상 서버 환경(사내 서버/클라우드) → **확인 필요**
